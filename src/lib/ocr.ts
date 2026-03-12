@@ -1,4 +1,5 @@
 import path from "node:path";
+import { existsSync } from "node:fs";
 
 import { createWorker, type Worker } from "tesseract.js";
 
@@ -22,6 +23,11 @@ async function getWorker(): Promise<Worker> {
       "node",
       "index.js",
     ),
+    langPath: existsSync(path.join(process.cwd(), "tessdata", "eng.traineddata"))
+      ? path.join(process.cwd(), "tessdata")
+      : undefined,
+    cachePath: path.join(process.env.TEMP || process.env.TMPDIR || "/tmp", "tesseract-cache"),
+    gzip: false,
   });
 
   return workerPromise;

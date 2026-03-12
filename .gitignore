@@ -37,7 +37,6 @@ yarn-error.log*
 .vercel
 # local runtime artifacts
 /data/
-eng.traineddata
 
 # typescript
 *.tsbuildinfo
