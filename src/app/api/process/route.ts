@@ -11,10 +11,24 @@ import type { InvoiceRecord } from "@/lib/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const optionalString = (maxLength: number) =>
+  z.preprocess(
+    (value) => {
+      if (value === null || value === undefined || value === "") {
+        return undefined;
+      }
+      return value;
+    },
+    z.string().trim().max(maxLength).optional(),
+  );
+
 const formSchema = z.object({
-  fallbackCurrency: z.string().trim().min(3).max(3).default("USD"),
-  cityOverride: z.string().trim().max(100).optional(),
-  notes: z.string().trim().max(2000).optional(),
+  fallbackCurrency: z.preprocess(
+    (value) => (value === null || value === undefined || value === "" ? "USD" : value),
+    z.string().trim().min(3).max(3),
+  ),
+  cityOverride: optionalString(100),
+  notes: optionalString(2000),
 });
 
 function extensionFromName(name: string): string {
@@ -85,4 +99,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-
